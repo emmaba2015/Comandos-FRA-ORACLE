@@ -1,0 +1,24 @@
+set linesize 300
+set pagesize 1000
+set feedback off
+set serveroutput on
+column name format a50 heading "Ruta Flash Recovery Area"
+column limite format 999,999 heading "Limite del Espacio - GB"
+column space format 999,999 heading "Espacio Libre - GB"
+column percent format 999,999 heading "% de Uso"
+
+SELECT NAME,
+(((SPACE_LIMIT/1024))/1024)/1024 AS LIMITE,
+ROUND((((SPACE_LIMIT - SPACE_USED + SPACE_RECLAIMABLE)/1024)/1024)/1024,2) AS SPACE,
+ROUND((SPACE_USED - SPACE_RECLAIMABLE)/SPACE_LIMIT * 100, 2) AS PERCENT
+FROM V$RECOVERY_FILE_DEST;
+
+BEGIN
+    SYS.DBMS_LOCK.SLEEP(2);
+END;
+/
+
+SELECT FILE_TYPE "Tipo",
+PERCENT_SPACE_USED "% Usado",
+PERCENT_SPACE_RECLAIMABLE "% Reciclable",
+NUMBER_OF_FILES "# de Archivos"
