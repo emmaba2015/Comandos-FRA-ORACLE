@@ -1,0 +1,13 @@
+
+-- Modificar tamaño de la FRA:
+
+ALTER SYSTEM SET db_recovery_file_dest_size=50g scope=both;
+
+-- Modificar la ruta de ubicación de la FRA
+
+ALTER SYSTEM SET db_recovery_file_dest='/flashbackROP' scope=both;
+
+-- Modificar el tiempo de retención de la FRA 
+
+ALTER SYSTEM SET DB_FLASHBACK_RETENTION_TARGET=10080 scope=both;  -- 1 semana,  en minutos
+
