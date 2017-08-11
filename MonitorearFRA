@@ -1,0 +1,35 @@
+-- Para ver status de flashback logs
+select * from v$flashback_database_log;
+
+-- Para ver detalle de archivos flashback logs generados
+select * from v$flashback_database_logfile order by first_time desc;
+
+-- Para ver los archive logs
+select * from v$archived_log order by completion_time desc;
+
+-- Para ver como esta alocada la FRA por tipo de archivo
+Select file_type, percent_space_used as used,percent_space_reclaimable as reclaimable,
+number_of_files as "number" from v$flash_recovery_area_usage;
+ 
+-- Para ver consumo de flashback logs por dia  
+select to_char(first_time,'YYYYMMDD'),round(sum(bytes)/1024/1024/1024,2) Size_Gb,count(1)
+from v$flashback_database_logfile
+group by to_char(first_time,'YYYYMMDD')
+order by 1;
+
+-- Para ver consumo de archives por dia
+select to_char(completion_time,'YYYYMMDD'),sum(block_size*blocks)/1024/1024/1024 Size_Gb,count(1)
+from v$archived_log
+group by to_char(completion_time,'YYYYMMDD')
+order by 1; 
+  
+-- Para ver FRA a nivel global
+select name,
+       round(space_limit/1024/1024/1024,2) as Total_size ,
+       round(space_used/1024/1024/1024,2) as Used,
+       round(SPACE_RECLAIMABLE/1024/1024/1024,2) as reclaimable ,
+       NUMBER_OF_FILES as "number"
+    from  V$RECOVERY_FILE_DEST;   
+
+-- Para ver estado de flashback
+select * from v$flashback_database_stat;
